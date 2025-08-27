@@ -2,95 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* AgroSense Design System - Agricultural theme with vibrant greens and earth tones
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Agricultural Green Theme */
+    --background: 60 15% 98%;
+    --foreground: 140 15% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 140 15% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 140 15% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Primary - Vibrant Agriculture Green */
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 142 76% 45%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary - Earth Tone */
+    --secondary: 45 25% 85%;
+    --secondary-foreground: 140 15% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted - Light Green */
+    --muted: 120 20% 92%;
+    --muted-foreground: 140 10% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Accent - Golden Green */
+    --accent: 65 60% 50%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 120 15% 85%;
+    --input: 120 15% 85%;
+    --ring: 142 76% 36%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Gradients for agricultural theme */
+    --gradient-primary: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 45%));
+    --gradient-hero: linear-gradient(135deg, hsl(142 76% 36%), hsl(65 60% 50%));
+    --gradient-subtle: linear-gradient(180deg, hsl(60 15% 98%), hsl(120 20% 95%));
+    
+    /* Shadows with green glow */
+    --shadow-elegant: 0 10px 30px -10px hsl(142 76% 36% / 0.3);
+    --shadow-glow: 0 0 40px hsl(142 76% 45% / 0.4);
+    
+    /* Animation */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    --sidebar-background: 60 15% 98%;
+    --sidebar-foreground: 140 15% 15%;
+    --sidebar-primary: 142 76% 36%;
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 120 20% 92%;
+    --sidebar-accent-foreground: 140 15% 15%;
+    --sidebar-border: 120 15% 85%;
+    --sidebar-ring: 142 76% 36%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark Agricultural Theme */
+    --background: 140 15% 8%;
+    --foreground: 120 15% 92%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 140 15% 10%;
+    --card-foreground: 120 15% 92%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 140 15% 10%;
+    --popover-foreground: 120 15% 92%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 142 76% 45%;
+    --primary-foreground: 140 15% 8%;
+    --primary-glow: 142 76% 55%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 140 15% 15%;
+    --secondary-foreground: 120 15% 92%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 140 15% 15%;
+    --muted-foreground: 120 10% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 65 60% 55%;
+    --accent-foreground: 140 15% 8%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 65%;
+    --destructive-foreground: 140 15% 8%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 140 15% 20%;
+    --input: 140 15% 20%;
+    --ring: 142 76% 45%;
+    
+    /* Dark gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(142 76% 35%), hsl(142 76% 45%));
+    --gradient-hero: linear-gradient(135deg, hsl(142 76% 35%), hsl(65 60% 45%));
+    --gradient-subtle: linear-gradient(180deg, hsl(140 15% 8%), hsl(140 15% 12%));
+    
+    --sidebar-background: 140 15% 8%;
+    --sidebar-foreground: 120 15% 92%;
+    --sidebar-primary: 142 76% 45%;
+    --sidebar-primary-foreground: 140 15% 8%;
+    --sidebar-accent: 140 15% 15%;
+    --sidebar-accent-foreground: 120 15% 92%;
+    --sidebar-border: 140 15% 20%;
+    --sidebar-ring: 142 76% 45%;
   }
 }
 
@@ -100,6 +119,57 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  /* Agriculture-themed animations */
+  .agro-pulse {
+    @apply animate-pulse;
+    animation: agro-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .grow-in {
+    @apply animate-in fade-in-0 zoom-in-95 duration-300;
+  }
+  
+  .leaf-float {
+    animation: leaf-float 3s ease-in-out infinite;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+  
+  .hero-gradient {
+    background: var(--gradient-hero);
+  }
+  
+  .agro-card {
+    @apply bg-card/80 backdrop-blur-sm border border-border/50 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02];
+  }
+}
+
+@keyframes agro-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes leaf-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(2deg);
+  }
+  66% {
+    transform: translateY(-5px) rotate(-1deg);
   }
 }

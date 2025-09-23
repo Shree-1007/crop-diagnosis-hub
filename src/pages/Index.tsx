@@ -5,9 +5,12 @@ import { ImageUpload } from '@/components/ImageUpload';
 import { AnalysisResults } from '@/components/AnalysisResults';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { DiseaseClassifier, ClassificationResult } from '@/lib/diseaseClassification';
+import { getOpenRouterCompletion } from "@/lib/ai-assistant";
 import { Leaf, Brain, Sparkles, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { motion, AnimatePresence } from "framer-motion";
 import heroImage from '@/assets/agro-hero.jpg';
 
 const Index = () => {
@@ -16,6 +19,9 @@ const Index = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<ClassificationResult | null>(null);
   const [classifier] = useState(new DiseaseClassifier());
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
+  const [input, setInput] = useState("");
 
   const handleImageSelect = (file: File) => {
     setSelectedImage(file);
@@ -52,6 +58,16 @@ const Index = () => {
     setAnalysisResult(null);
   };
 
+  const handleSendMessage = async () => {
+    if (!input.trim()) return;
+    const newMessages = [...messages, { role: "user", content: input }];
+    setMessages(newMessages);
+    setInput("");
+
+    const aiResponse = await getOpenRouterCompletion(input);
+    setMessages([...newMessages, { role: "assistant", content: aiResponse }]);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Header */}
@@ -76,7 +92,7 @@ const Index = () => {
             {/* Hero Section */}
             <section className="text-center py-12 space-y-8">
               <div className="relative overflow-hidden rounded-2xl">
-                <img 
+                <img
                   src={heroImage}
                   alt="Agricultural technology"
                   className="w-full h-64 md:h-80 object-cover"
@@ -157,15 +173,63 @@ const Index = () => {
                   {t.common.newAnalysis}
                 </Button>
               </div>
-              
-              <AnalysisResults 
-                result={analysisResult} 
+
+              <AnalysisResults
+                result={analysisResult}
                 imageFile={selectedImage!}
               />
             </section>
           </>
         )}
       </main>
+
+      {/* AI Assistant Toggle Button */}
+      <Button
+        onClick={() => setIsAssistantOpen(!isAssistantOpen)}
+        className="fixed bottom-4 right-4 z-50"
+      >
+        {isAssistantOpen ? "Close Assistant" : "Open Assistant"}
+      </Button>
+
+      {/* AI Assistant Panel */}
+      <AnimatePresence>
+        {isAssistantOpen && (
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed bottom-0 right-0 w-full max-w-md h-2/3 bg-white border-t border-gray-200 shadow-lg rounded-t-lg flex flex-col z-50"
+          >
+            <div className="flex-1 p-4 overflow-y-auto">
+              {messages.map((msg, index) => (
+                <div key={index} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>
+                  <span
+                    className={`inline-block p-2 rounded-lg ${
+                      msg.role === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-black"
+                    }`}
+                  >
+                    {msg.content}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="p-4 border-t">
+              <div className="flex">
+                <Textarea
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask the AI assistant..."
+                  className="flex-1"
+                />
+                <Button onClick={handleSendMessage} className="ml-2">
+                  Send
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Footer */}
       <footer className="border-t border-border/50 bg-card/50 backdrop-blur-sm mt-16">

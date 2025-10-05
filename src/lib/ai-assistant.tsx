@@ -4,22 +4,47 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
-  apiKey: " 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",
+  apiKey: import.meta.env.VITE_OPENAI_API_KEY || "",
   dangerouslyAllowBrowser: true,
 });
 
-export async function getOpenRouterCompletion(message: string): Promise<string> {
+export async function getOpenRouterCompletion(
+  message: string,
+  onUpdate?: (chunk: string) => void
+): Promise<string> {
   try {
-    const completion = await openai.chat.completions.create({
-      messages: [{ role: "user", content: message }],
-      model: "google/gemma-7b-it:free", // Or any other free model
-    });
+    if (onUpdate) {
+      // Streaming implementation
+      let fullResponse = "";
+      
+      const stream = await openai.chat.completions.create({
+        messages: [{ role: "user", content: message }],
+        model: "mistralai/mistral-small-3.2-24b-instruct:free", // Using the specified free model
+        stream: true,
+      });
+      
+      for await (const chunk of stream) {
+        const content = chunk.choices[0]?.delta?.content || "";
+        if (content) {
+          fullResponse += content;
+          onUpdate(content);
+        }
+      }
+      
+      return fullResponse;
+    } else {
+      // Non-streaming fallback
+      const completion = await openai.chat.completions.create({
+        messages: [{ role: "user", content: message }],
+        model: "mistralai/mistral-small-3.2-24b-instruct:free", // Using the specified free model
+      });
 
-    if (completion.choices[0].message.content === null) {
-      return "Sorry, I could not provide a response.";
+      if (completion.choices[0].message.content === null) {
+        return "Sorry, I could not provide a response.";
+      }
+
+      return completion.choices[0].message.content;
     }
-
-    return completion.choices[0].message.content;
   } catch (error) {
     console.error("Error fetching completion from OpenRouter:", error);
     return "An error occurred while fetching the response.";

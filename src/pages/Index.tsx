@@ -60,12 +60,32 @@ const Index = () => {
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
-    const newMessages = [...messages, { role: "user", content: input }];
+    const userMessage = input;
+    const newMessages = [...messages, { role: "user", content: userMessage }];
     setMessages(newMessages);
     setInput("");
-
-    const aiResponse = await getOpenRouterCompletion(input);
-    setMessages([...newMessages, { role: "assistant", content: aiResponse }]);
+    
+    // Add an empty assistant message that will be updated with streaming content
+    const assistantMessageIndex = newMessages.length;
+    setMessages([...newMessages, { role: "assistant", content: "" }]);
+    
+    // Use the streaming API
+    await getOpenRouterCompletion(
+      userMessage,
+      (chunk) => {
+        // Update the assistant message with each new chunk
+        setMessages(currentMessages => {
+          const updatedMessages = [...currentMessages];
+          if (updatedMessages[assistantMessageIndex]) {
+            updatedMessages[assistantMessageIndex] = {
+              role: "assistant",
+              content: (updatedMessages[assistantMessageIndex].content || "") + chunk
+            };
+          }
+          return updatedMessages;
+        });
+      }
+    );
   };
 
   return (
@@ -201,6 +221,21 @@ const Index = () => {
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="fixed bottom-0 right-0 w-full max-w-md h-2/3 bg-white border-t border-gray-200 shadow-lg rounded-t-lg flex flex-col z-50"
           >
+            <div className="flex justify-between items-center p-3 border-b">
+              <h3 className="font-semibold">AI Assistant</h3>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setIsAssistantOpen(false)}
+                className="h-8 w-8 p-0 rounded-full"
+              >
+                <span className="sr-only">Close</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                  <path d="M18 6 6 18"></path>
+                  <path d="m6 6 12 12"></path>
+                </svg>
+              </Button>
+            </div>
             <div className="flex-1 p-4 overflow-y-auto">
               {messages.map((msg, index) => (
                 <div key={index} className={`mb-2 ${msg.role === "user" ? "text-right" : "text-left"}`}>

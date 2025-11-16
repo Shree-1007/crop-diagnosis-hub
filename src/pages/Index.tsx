@@ -34,16 +34,18 @@ const Index = () => {
     setAnalysisResult(null);
   };
 
-  const handleAnalyze = async () => {
-    if (!selectedImage) {
+  const handleAnalyze = async (image: File, result?: any) => {
+    if (!image) {
       toast.error('Please select an image first');
       return;
     }
 
     setIsAnalyzing(true);
     try {
-      const result = await classifier.classifyImage(selectedImage);
-      setAnalysisResult(result);
+      // If result is provided from the ImageUpload component, use it
+      // Otherwise, use the classifier directly
+      const classificationResult = result || await classifier.classifyImage(image);
+      setAnalysisResult(classificationResult);
       toast.success('Analysis completed successfully!');
     } catch (error) {
       toast.error('Failed to analyze image. Please try again.');
@@ -147,30 +149,8 @@ const Index = () => {
                 onImageSelect={handleImageSelect}
                 selectedImage={selectedImage}
                 onClearImage={handleClearImage}
+                onAnalyze={handleAnalyze}
               />
-
-              {selectedImage && (
-                <div className="text-center">
-                  <Button
-                    size="lg"
-                    className="hero-gradient text-white px-8 py-3 text-lg font-semibold"
-                    onClick={handleAnalyze}
-                    disabled={isAnalyzing}
-                  >
-                    {isAnalyzing ? (
-                      <>
-                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        {t.analysis.analyzing}
-                      </>
-                    ) : (
-                      <>
-                        <Brain className="h-5 w-5 mr-2" />
-                        {t.hero.analyzeButton}
-                      </>
-                    )}
-                  </Button>
-                </div>
-              )}
             </section>
 
             {/* Loading State */}

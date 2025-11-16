@@ -1,4 +1,4 @@
-import { useState, createContext, useContext } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
 import { LanguageCode, translations } from '@/lib/languages';
 
 interface LanguageContextType {
@@ -26,12 +26,12 @@ export const useLanguageState = (defaultLang: LanguageCode = 'en') => {
   };
 
   // Load saved language on initialization
-  useState(() => {
+  useEffect(() => {
     const saved = localStorage.getItem('agrosense-language') as LanguageCode;
     if (saved && translations[saved]) {
       setCurrentLanguage(saved);
     }
-  });
+  }, []);
 
   return {
     currentLanguage,

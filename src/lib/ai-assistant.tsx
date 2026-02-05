@@ -16,13 +16,13 @@ export async function getOpenRouterCompletion(
     if (onUpdate) {
       // Streaming implementation
       let fullResponse = "";
-      
+
       const stream = await openai.chat.completions.create({
         messages: [{ role: "user", content: message }],
-        model: "mistralai/mistral-small-3.2-24b-instruct:free", // Using the specified free model
+        model: "mistralai/mistral-small-3.1-24b-instruct", // Mistral Small 3.1 24B
         stream: true,
       });
-      
+
       for await (const chunk of stream) {
         const content = chunk.choices[0]?.delta?.content || "";
         if (content) {
@@ -30,13 +30,13 @@ export async function getOpenRouterCompletion(
           onUpdate(content);
         }
       }
-      
+
       return fullResponse;
     } else {
       // Non-streaming fallback
       const completion = await openai.chat.completions.create({
         messages: [{ role: "user", content: message }],
-        model: "mistralai/mistral-small-3.2-24b-instruct:free", // Using the specified free model
+        model: "mistralai/mistral-small-3.1-24b-instruct", // Mistral Small 3.1 24B
       });
 
       if (completion.choices[0].message.content === null) {
@@ -45,8 +45,14 @@ export async function getOpenRouterCompletion(
 
       return completion.choices[0].message.content;
     }
-  } catch (error) {
+  } catch (error: unknown) {
+    const err = error as { message?: string; status?: number; response?: { data?: unknown } };
     console.error("Error fetching completion from OpenRouter:", error);
-    return "An error occurred while fetching the response.";
+    console.error("Error details:", {
+      message: err?.message,
+      status: err?.status,
+      response: err?.response?.data
+    });
+    return `An error occurred: ${err?.message || 'Unknown error'}`;
   }
 }
